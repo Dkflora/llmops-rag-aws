@@ -1,0 +1,17 @@
+"# Per Diem Rates 2026 (NW-POL-042, 2026.1, effective 2026-01-01)"
+city,country,meals_per_day_usd,hotel_cap_per_night_usd,incidentals_per_day_usd
+Austin,United States,75,220,15
+Chicago,United States,75,220,15
+New York,United States,90,300,20
+San Francisco,United States,90,300,20
+London,United Kingdom,85,300,20
+Manchester,United Kingdom,70,200,15
+Berlin,Germany,80,300,20
+Munich,Germany,80,260,20
+Bangalore,India,35,120,10
+Mumbai,India,40,140,10
+Paris,France,85,280,20
+Amsterdam,Netherlands,80,260,20
+Dublin,Ireland,80,260,20
+Toronto,Canada,75,230,15
+Singapore,Singapore,80,250,20

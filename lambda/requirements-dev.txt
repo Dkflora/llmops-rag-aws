@@ -1,0 +1,4 @@
+# Running the tests from your own machine, against the deployed stack.
+# Never installed in the layer that goes to AWS.
+
+pytest>=8.0

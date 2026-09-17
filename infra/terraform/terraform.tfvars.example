@@ -1,0 +1,24 @@
+# Copy to terraform.tfvars and change what you need. terraform.tfvars is not committed.
+
+aws_region   = "us-east-1"
+project_name = "northwind-hr"
+
+# Must be unique in the region: add your initials or a number
+cognito_domain_prefix = "northwind-hr-yourname"
+
+# Your own address for the app: https://hrassistant.yourdomain.com
+#
+# Requirements: you own the domain, and its hosted zone is in THIS AWS account
+# (Route 53 > Hosted zones shows it). Terraform then requests a wildcard certificate
+# for *.yourdomain.com, proves ownership through that zone, and points the subdomain
+# at CloudFront.
+#
+# No domain? Leave domain_name empty. Everything still works, at the CloudFront address.
+domain_name = ""
+subdomain   = "hrassistant"
+
+# Where alarm emails go (leave empty for none)
+alarm_email = ""
+
+# 1 instead of 2 halves the database cost, without Multi-AZ failover
+aurora_instance_count = 2

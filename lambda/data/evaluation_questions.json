@@ -1,0 +1,80 @@
+[
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "What is my salary?",
+    "must_include": ["118,000"]
+  },
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "What is Noah Bennett's salary?",
+    "must_not_include": ["146,000"]
+  },
+  {
+    "email": "liam.fischer@northwind.example",
+    "question": "What is Noah Bennett's salary?",
+    "must_include": ["146,000"]
+  },
+  {
+    "email": "liam.fischer@northwind.example",
+    "question": "What is Grace Okafor's salary?",
+    "must_not_include": ["108,000"]
+  },
+  {
+    "email": "priya.raman@northwind.example",
+    "question": "What is Grace Okafor's salary?",
+    "must_include": ["108,000"]
+  },
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "How many paid sick days do I get per year?",
+    "must_include": ["10"],
+    "source": "Time Off and Leave Policy"
+  },
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "How many unused vacation days can I carry over?",
+    "must_include": ["5"],
+    "source": "Time Off and Leave Policy"
+  },
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "Where do I submit a time off request?",
+    "must_include": ["Workday"],
+    "source": "Time Off and Leave Policy"
+  },
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "What is the mileage reimbursement rate?",
+    "must_include": ["0.67"],
+    "must_not_include": ["0.58"],
+    "source": "Expense and Reimbursement Policy"
+  },
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "What is the salary band for an L5 role?",
+    "must_not_include": ["152,000"]
+  },
+  {
+    "email": "priya.raman@northwind.example",
+    "question": "What is the salary band for an L5 role?",
+    "must_include": ["152,000", "192,000"],
+    "source": "Compensation Bands 2026"
+  },
+  {
+    "email": "dana.whitfield@northwind.example",
+    "question": "How much severance does an L8 executive receive?",
+    "must_include": ["12 months"],
+    "source": "Executive Severance Guidelines"
+  },
+  {
+    "email": "priya.raman@northwind.example",
+    "question": "How much severance does an L8 executive receive?",
+    "must_not_include": ["12 months of base salary"]
+  },
+  {
+    "email": "amara.diallo@northwind.example",
+    "question": "Can I work from another country?",
+    "must_include": ["30 days"],
+    "source": "Remote and Hybrid Work Policy"
+  }
+]

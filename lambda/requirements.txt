@@ -1,0 +1,17 @@
+# Bedrock: the Converse API for chat, Titan for embeddings, guardrails.
+# Also S3 and Secrets Manager. The Lambda's IAM role authenticates: no API key.
+boto3>=1.35
+
+# Aurora PostgreSQL
+psycopg[binary]>=3.2
+
+# OpenSearch Serverless (signed requests need requests)
+opensearch-py>=2.8
+requests>=2.32
+
+# Reading policy files
+pypdf>=5.0.0
+python-docx>=1.1.2
+
+# Splitting text into chunks
+langchain-text-splitters>=1.0.0

@@ -1,0 +1,40 @@
+Title: Wellness Allowance
+Document ID: NW-POL-035
+Version: 2026.1
+Effective: 2026-01-01
+Owner: People Operations
+Applies to: All employees after 90 days of service
+
+Wellness allowance
+
+Northwind pays up to 600 US dollars a year, or the local equivalent, towards things that keep
+you well. You claim it back through the expenses system like any other expense, with a
+receipt.
+
+What it covers, without needing approval:
+  - Gym membership, classes, sports clubs and equipment
+  - Bicycles, helmets and bicycle servicing
+  - Running shoes and sports clothing
+  - Meditation and sleep apps and subscriptions
+  - Nutrition and dietetics consultations
+  - Smoking cessation programmes and products
+  - Ergonomic items for home that are not covered by the equipment policy
+  - Massage and physiotherapy not covered by medical insurance
+
+What it does not cover:
+  - Anything for someone other than you
+  - Alcohol, supplements marketed for weight loss, and cosmetic treatments
+  - Medical treatment that your insurance would cover
+  - Holidays, spa breaks and travel
+
+The allowance runs by calendar year and does not carry over. It is pro-rated for employees
+who join partway through the year: joining in July gives you 300 dollars.
+
+Claims are paid with your salary in the month after approval. Your manager approves them, and
+managers are asked to approve rather than judge: if it is on the list above, approve it.
+
+Employees in India and Germany should note that the allowance may be treated as a taxable
+benefit depending on what it is spent on. Payroll will tell you if that applies.
+
+This allowance is separate from the home office allowance in the Equipment and Home Working
+policy, and separate from any medical insurance benefit. You may claim all three.

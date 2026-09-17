@@ -1,0 +1,8 @@
+"# Medical Plan Comparison 2026 (United States) (NW-POL-031, 2026.1, effective 2026-01-01)"
+plan,type,annual_deductible_individual,annual_deductible_family,out_of_pocket_max_individual,employee_monthly_cost,northwind_monthly_contribution,hsa_eligible
+Northwind Core HDHP,High deductible with HSA,1650,3300,4000,62,351,yes
+Northwind Plus PPO,Preferred provider,800,1600,3200,118,668,no
+Northwind Select HMO,Health maintenance,500,1000,2500,96,544,no
+Northwind Core HDHP Family,High deductible with HSA,3300,3300,8000,214,499,yes
+Northwind Plus PPO Family,Preferred provider,1600,1600,6400,389,907,no
+Northwind Select HMO Family,Health maintenance,1000,1000,5000,312,728,no

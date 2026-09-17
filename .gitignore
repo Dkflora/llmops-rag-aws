@@ -1,0 +1,40 @@
+# Secrets
+.env
+*.tfvars
+!terraform.tfvars.example
+
+# Build artifacts: rebuild them with scripts/build-*.sh, never commit them
+build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Front end
+node_modules/
+frontend/dist/
+frontend/.env.production
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+
+# Internal notes: not part of the application repo
+docs/instructor-service-reference.md
+
+# Terraform plan files can contain variable values
+tfplan
+*.tfplan
+
+# Test cache
+.pytest_cache/
+
+# Course handout: distributed separately, not part of the application repo
+docs/northwind-hr-on-aws.html
+docs/northwind-hr-on-aws.docx

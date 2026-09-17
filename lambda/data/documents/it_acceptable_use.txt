@@ -1,0 +1,55 @@
+IT ACCEPTABLE USE POLICY
+========================
+
+
+ACCOUNTS AND PASSWORDS
+
+Every employee receives a named account. Shared accounts are not permitted.
+Passwords must be at least 14 characters. Multi-factor authentication is required
+on all company systems and cannot be disabled.
+
+Report a suspected account compromise to the IT service desk immediately, and in
+any case within 1 hour of noticing it.
+
+
+COMPANY DEVICES
+
+Company laptops are managed and encrypted. Do not install software from outside
+the approved catalogue without an IT exception. Personal use of a company laptop
+is permitted within reason and does not create a right to privacy on that device.
+
+
+PERSONAL DEVICES
+
+Personal phones may access company email and chat through the managed app
+container. Personal laptops may not access company systems except through the
+virtual desktop.
+
+
+APPROVED AI TOOLS
+
+Only AI tools listed in the approved catalogue may be used with company data. As
+of this version the approved list is the internal assistant and the approved
+enterprise coding assistant.
+
+Do not paste customer data, employee personal data, unreleased financial
+information, or source code into any tool that is not on the approved list.
+
+
+DATA CLASSIFICATION
+
+Four levels are used: Public, Internal, Confidential, and Restricted. Employee
+personal data and compensation data are Restricted. Restricted data may only be
+stored in systems approved for that level.
+
+
+EMAIL AND PHISHING
+
+Report suspected phishing with the Report Phish button. Do not forward suspicious
+messages to colleagues. IT runs simulated phishing tests quarterly.
+
+
+LEAVING THE COMPANY
+
+All company equipment must be returned by your last working day. Access is
+revoked at 17:00 on your last working day, or earlier if agreed.

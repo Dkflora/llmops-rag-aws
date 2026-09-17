@@ -1,0 +1,14 @@
+# Default: let Git normalise text line endings in the repository.
+* text=auto
+
+# Binary. Without these, core.autocrlf rewrites bytes inside the files and they
+# arrive corrupted on somebody else's clone.
+*.pdf   binary
+*.docx  binary
+*.png   binary
+*.jpg   binary
+*.ico   binary
+*.zip   binary
+
+# Must keep LF: these run in bash, and CRLF gives "bad interpreter".
+*.sh    text eol=lf

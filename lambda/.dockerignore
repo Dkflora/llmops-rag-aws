@@ -1,0 +1,6 @@
+# Keep the image small and clean: these never belong in it.
+__pycache__/
+*.pyc
+tests/
+pytest.ini
+data/documents/

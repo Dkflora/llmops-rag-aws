@@ -1,0 +1,19 @@
+Title: Dress Code
+Document ID: NW-POL-004
+Version: 2026.1
+Effective: 2026-01-01
+Owner: People Operations
+Applies to: All employees
+
+Dress code
+
+Northwind has no formal dress code. Dress in a way that is comfortable for you and
+appropriate for what your day holds.
+
+If you are meeting customers, regulators or candidates, dress to the standard that meeting
+would expect. Your manager will tell you if there is a specific expectation.
+
+Safety requirements in the Bangalore data centre area override personal preference: closed
+shoes and no loose jewellery.
+
+Video calls have the same standard as the office. There is no expectation to be on camera.

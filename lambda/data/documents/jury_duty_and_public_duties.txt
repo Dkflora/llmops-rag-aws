@@ -1,0 +1,28 @@
+Title: Jury Service and Public Duties
+Document ID: NW-POL-016
+Version: 2026.1
+Effective: 2026-01-01
+Owner: People Operations
+Applies to: All employees
+
+Jury service and public duties
+
+Northwind pays your normal salary for the full duration of jury service. There is no cap on
+the number of days and it does not come out of your paid time off.
+
+Where the court pays a loss of earnings allowance, claim it and pass it to payroll, who will
+deduct the amount from your salary for that period. Do not claim the allowance and keep it as
+well as full pay.
+
+Send your summons to hr-help@northwind.example as soon as you receive it so cover can be
+arranged.
+
+Northwind does not ask employees to seek deferral or excusal from jury service.
+
+Paid time off is also provided for:
+  - service as a magistrate, school governor or local councillor, up to 10 days per year
+  - reserve forces annual training, up to 15 days per year
+  - attendance as a witness under subpoena, for the days required
+
+Voting time off is provided where the law requires it and where polling hours do not allow
+voting outside working hours.
