@@ -4,6 +4,58 @@ import Markdown from "react-markdown";
 
 import { makeApi } from "./api.js";
 
+// Shown on an empty chat. Clicking one asks it, which saves typing in a demo.
+const SUGGESTIONS = [
+  "How many holiday days can I carry into next year?",
+  "What is my salary?",
+  "How many vacation days do I have left?",
+  "What is the mileage reimbursement rate?",
+];
+
+// "Amara Diallo" becomes "AD", for the little circle beside their messages.
+function initials(name) {
+  return (name || "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join("");
+}
+
+// A question can take a while when Aurora is waking from zero, so count the
+// seconds rather than leave somebody wondering whether it is stuck.
+function Thinking() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setSeconds((n) => n + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="row assistant">
+      <div className="mark small" aria-hidden="true">N</div>
+      <div className="bubble">
+        <div className="thinking" role="status">
+          <span className="dots" aria-hidden="true">
+            <i /><i /><i />
+          </span>
+          <span>Looking for the answer</span>
+          {seconds >= 4 && <span className="elapsed">{seconds}s</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SendIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export default function Chat({ signIn, onSignOut }) {
   // Rebuild the API helper only when the token or email changes (Cognito renews tokens every hour)
   const api = useMemo(() => makeApi(signIn), [signIn.token, signIn.email]);
@@ -16,6 +68,7 @@ export default function Chat({ signIn, onSignOut }) {
   const [waiting, setWaiting] = useState(false); // true while the assistant works
   const [error, setError] = useState("");
   const bottom = useRef(null);
+  const box = useRef(null);
 
   // 1. When the page opens: who is signed in, and which chats do they have?
   useEffect(() => {
@@ -25,8 +78,16 @@ export default function Chat({ signIn, onSignOut }) {
 
   // Keep the newest message in view
   useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: "smooth" });
+    bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, waiting]);
+
+  // The box grows with the question instead of scrolling a one line input
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [question]);
 
   // 2. Open a saved chat, or start a new one
   async function openChat(id) {
@@ -43,22 +104,25 @@ export default function Chat({ signIn, onSignOut }) {
     setConversationId(null);
     setMessages([]);
     setError("");
+    box.current?.focus();
   }
 
   // 3. Ask a question: show it straight away, then add the answer when it arrives
-  async function ask(event) {
-    event.preventDefault();
-    const text = question.trim();
-    if (!text || waiting) return;
+  async function send(text) {
+    const asked = text.trim();
+    if (!asked || waiting) return;
 
     setQuestion("");
     setError("");
-    setMessages((current) => [...current, { role: "user", content: text }]);
+    setMessages((current) => [...current, { role: "user", content: asked }]);
     setWaiting(true);
 
     try {
-      const reply = await api.chat(text, conversationId);
-      setMessages((current) => [...current, { role: "assistant", content: reply.answer, sources: reply.sources }]);
+      const reply = await api.chat(asked, conversationId);
+      setMessages((current) => [
+        ...current,
+        { role: "assistant", content: reply.answer, sources: reply.sources },
+      ]);
       if (conversationId === null) {
         setConversationId(reply.conversation_id);
         setChats(await api.conversations());
@@ -70,12 +134,26 @@ export default function Chat({ signIn, onSignOut }) {
     }
   }
 
+  function onSubmit(event) {
+    event.preventDefault();
+    send(question);
+  }
+
+  // Enter sends, shift and enter starts a new line, which is what people expect
+  function onKeyDown(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      send(question);
+    }
+  }
+
   // Signed in with Cognito, but not an employee in our database
   if (error && !me) {
     return (
       <div className="login">
+        <div className="mark" aria-hidden="true">N</div>
         <h1>Northwind HR Assistant</h1>
-        <p className="error">{error}</p>
+        <p>{error}</p>
         <button onClick={onSignOut}>Sign out</button>
       </div>
     );
@@ -89,19 +167,20 @@ export default function Chat({ signIn, onSignOut }) {
     <div className="layout">
       <aside className="sidebar">
         <div className="who">
-          <strong>{me.full_name}</strong>
-          <span>
-            {me.job_title} · {me.department}
-          </span>
+          <div className="mark small user" aria-hidden="true">{initials(me.full_name)}</div>
+          <div className="who-text">
+            <strong>{me.full_name}</strong>
+            <span>{me.job_title} · {me.department}</span>
+          </div>
         </div>
 
         <button className="new-chat" onClick={newChat}>
-          + New chat
+          <span aria-hidden="true">+</span> New chat
         </button>
 
         <nav aria-label="Your chats">
           <p className="label">Your chats</p>
-          {chats.length === 0 && <p className="muted">No chats yet.</p>}
+          {chats.length === 0 && <p className="muted" style={{ padding: "0 6px", fontSize: 14 }}>No chats yet.</p>}
           {chats.map((chat) => (
             <button
               key={chat.id}
@@ -113,60 +192,77 @@ export default function Chat({ signIn, onSignOut }) {
           ))}
         </nav>
 
-        <button className="sign-out" onClick={onSignOut}>
-          Sign out
-        </button>
+        <button className="sign-out" onClick={onSignOut}>Sign out</button>
       </aside>
 
       <main className="conversation">
-        <h1>Northwind HR Assistant</h1>
+        <header className="topbar">
+          <div className="mark small" aria-hidden="true">N</div>
+          <h1>Northwind HR Assistant</h1>
+          <span className="dot" aria-hidden="true" />
+          <span className="dot-label">Online</span>
+        </header>
 
-        <div className="messages">
-          {messages.length === 0 && !waiting && (
-            <p className="muted">Ask about company policy, or about your own pay and time off.</p>
-          )}
+        <div className="scroller">
+          <div className="messages">
+            {messages.length === 0 && !waiting && (
+              <div className="empty">
+                <div className="mark" aria-hidden="true">N</div>
+                <h2>Hello, {me.full_name.split(" ")[0]}</h2>
+                <p>Ask about company policy, or about your own pay and time off.</p>
+                <div className="suggestions">
+                  {SUGGESTIONS.map((text) => (
+                    <button key={text} className="suggestion" onClick={() => send(text)}>
+                      {text}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {messages.map((message, index) => (
-            <div key={index} className={`message ${message.role}`}>
-              <Markdown>{message.content}</Markdown>
-              {message.sources?.length > 0 && (
-                <details>
-                  <summary>Sources</summary>
-                  <ul>
-                    {message.sources.map((source) => (
-                      <li key={source}>{source}</li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-            </div>
-          ))}
+            {messages.map((message, index) => (
+              <div key={index} className={`row ${message.role}`}>
+                <div className={message.role === "user" ? "mark small user" : "mark small"} aria-hidden="true">
+                  {message.role === "user" ? initials(me.full_name) : "N"}
+                </div>
+                <div className="bubble">
+                  <Markdown>{message.content}</Markdown>
+                  {message.sources?.length > 0 && (
+                    <div className="sources">
+                      {message.sources.map((source) => (
+                        <span className="source-chip" key={source}>{source}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
 
-          {waiting && (
-            <div className="message assistant thinking" role="status">
-              <span className="spinner" aria-hidden="true" /> Looking for the answer…
-            </div>
-          )}
-          <div ref={bottom} />
+            {waiting && <Thinking />}
+            <div ref={bottom} />
+          </div>
         </div>
 
-        {error && <p className="error">{error}</p>}
-
-        <form className="ask" onSubmit={ask}>
-          <label htmlFor="question" className="visually-hidden">
-            Your question
-          </label>
-          <input
-            id="question"
-            value={question}
-            onChange={(event) => setQuestion(event.target.value)}
-            placeholder="How many vacation days do I have left?"
-            autoComplete="off"
-          />
-          <button type="submit" disabled={waiting || !question.trim()}>
-            Ask
-          </button>
-        </form>
+        <div className="ask-wrap">
+          {error && <p className="error-banner">{error}</p>}
+          <form className="ask" onSubmit={onSubmit}>
+            <label htmlFor="question" className="visually-hidden">Your question</label>
+            <textarea
+              id="question"
+              ref={box}
+              rows={1}
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={onKeyDown}
+              placeholder="Ask about policy, pay or time off…"
+              autoComplete="off"
+            />
+            <button className="send" type="submit" disabled={waiting || !question.trim()} aria-label="Send">
+              <SendIcon />
+            </button>
+          </form>
+          <p className="hint">Answers come from Northwind's HR policies and your own record. Enter sends, shift and enter for a new line.</p>
+        </div>
       </main>
     </div>
   );
