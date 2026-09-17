@@ -53,7 +53,7 @@ aws s3 cp ../../lambda/data/documents/manifest.json "s3://$DOCS/"
 
 # 6. Publish the React app
 terraform output -raw frontend_env > ../../frontend/.env.production
-cd ../../frontend && npm install && npm run build && cd ../infra/terraform
+cd ../../frontend && npm ci && npm run build && cd ../infra/terraform
 aws s3 sync ../../frontend/dist/ "s3://$(terraform output -raw frontend_bucket)/" --delete
 aws cloudfront create-invalidation --distribution-id "$(terraform output -raw cloudfront_distribution_id)" --paths "/*"
 

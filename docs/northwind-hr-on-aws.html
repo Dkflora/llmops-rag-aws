@@ -886,6 +886,14 @@ aws s3 sync dist/ "s3://$(terraform -chdir=../terraform output -raw frontend_buc
 aws cloudfront create-invalidation --paths "/*" \
   --distribution-id "$(terraform -chdir=../terraform output -raw cloudfront_distribution_id)"
 cd ../terraform</code></pre>
+        <p><code>frontend/</code> is already in the repository with its
+        <code>package.json</code> and <code>package-lock.json</code>. npm creates
+        <code>node_modules/</code>, and the build creates <code>frontend/dist/</code>. Both
+        are gitignored.</p>
+        <p><code>npm ci</code> installs exactly the versions pinned in the lockfile and
+        deletes <code>node_modules</code> first. <code>npm install</code> would be free to
+        resolve newer versions and rewrite the lockfile, so two people could get different
+        builds from the same commit.</p>
         </li>
         <li>
           <h3>Give the demo users a password</h3>

@@ -1075,7 +1075,7 @@ CloudFront routes it. That is the payoff from putting both behind one distributi
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run build
 aws s3 sync dist/ s3://FRONT_BUCKET/ --delete
 aws cloudfront create-invalidation --distribution-id CF_DIST_ID --paths "/*"

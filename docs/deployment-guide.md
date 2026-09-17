@@ -417,6 +417,16 @@ aws s3 sync frontend/dist/ "s3://$FE/" --delete
 aws cloudfront create-invalidation --distribution-id "$DIST" --paths '/*'
 ```
 
+`frontend/` is already in the repository, with its `package.json` and
+`package-lock.json`. What npm creates is `node_modules/`, and `npm run build`
+creates `frontend/dist/`. Both are gitignored.
+
+`npm ci` installs exactly the versions pinned in `package-lock.json` and deletes
+`node_modules` first. `npm install` would be free to resolve newer versions and
+rewrite the lockfile, so two people could get different builds from the same
+commit. `ci` also fails if `package.json` and the lockfile disagree, which is
+what you want before shipping a bundle.
+
 `npm run build` takes a couple of seconds. The CloudFront invalidation says
 `InProgress` and finishes within a minute.
 
