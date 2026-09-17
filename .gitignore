@@ -25,7 +25,7 @@ frontend/.env.production
 .terraform.lock.hcl
 crash.log
 
-# Internal notes: not part of the application repo
+# Instructor notes only: everything else in docs/ ships
 docs/instructor-service-reference.md
 
 # Terraform plan files can contain variable values
@@ -34,7 +34,3 @@ tfplan
 
 # Test cache
 .pytest_cache/
-
-# Course handout: distributed separately, not part of the application repo
-docs/northwind-hr-on-aws.html
-docs/northwind-hr-on-aws.docx
