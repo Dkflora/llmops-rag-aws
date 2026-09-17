@@ -373,7 +373,7 @@
           <tbody>
             <tr><td>User interface</td><td>Streamlit in a container</td><td>React, built into static files in S3, served by CloudFront</td></tr>
             <tr><td>Sign-in</td><td>No sign-in</td><td>Cognito hosted sign-in (OIDC). In a company, federated to Okta or Entra ID</td></tr>
-            <tr><td>API</td><td>Inside Streamlit</td><td>API Gateway HTTP API, JWT check and throttling, then Lambda</td></tr>
+            <tr><td>API</td><td>None. The Streamlit page called the Python directly</td><td>API Gateway HTTP API, JWT check and throttling, then Lambda</td></tr>
             <tr><td>Employee records</td><td>None. The POC answered from policy documents only, and said so when asked about a person</td><td>New here: twelve employees in Aurora, with a row-level security policy deciding whose records come back</td></tr>
             <tr><td>Vector store</td><td>PostgreSQL with pgvector, one table, one vector column</td><td>Amazon OpenSearch Serverless</td></tr>
             <tr><td>Embeddings</td><td>bge-small, 384 numbers, on the CPU</td><td>Titan Text Embeddings V2 on Bedrock, 1,024 numbers</td></tr>
@@ -779,7 +779,7 @@
             <tr><td><code>employees.py</code></td><td>Login lookup and visible records</td><td>No <code>WHERE</code> clause: the database filters</td></tr>
             <tr><td><code>guardrails.py</code></td><td>ApplyGuardrail on the question and the answer</td><td>New</td></tr>
             <tr><td><code>assistant.py</code></td><td>A model plus two tools, in a loop</td><td>Bedrock <code>Converse</code> API, guardrail checks, fallback model</td></tr>
-            <tr><td><code>chat_handler.py</code></td><td>The API routes, email from token claims</td><td>New, replaces Streamlit</td></tr>
+            <tr><td><code>chat_handler.py</code></td><td>The API routes, email from token claims</td><td>New. The POC had no API: its page called the Python directly</td></tr>
             <tr><td><code>ingest_handler.py</code></td><td>Download from S3, then load, chunk, embed, store</td><td>Lambda entry point</td></tr>
             <tr><td><code>setup_db_handler.py</code></td><td>Runs the SQL files once, sets the <code>hr_app</code> password</td><td>New</td></tr>
             <tr><td><code>evaluate_handler.py</code></td><td>The 14-question evaluation, plus a similarity report</td><td>Runs inside AWS</td></tr>
@@ -865,30 +865,45 @@ bash scripts/build-function.sh    <span class="c"># build/function.zip  ~26 KB  
           <p class="expect">101 resources in 7 minutes 34 seconds on the run these figures come from.</p>
         </li>
         <li>
-          <h3>Create the tables, security and demo data</h3>
-          <pre><code>aws lambda invoke --function-name northwind-hr-setup-db --cli-read-timeout 180 setup.json
+          <h3>Set up the database</h3>
+          <p>Terraform created an empty Aurora cluster. This fills it: the tables, the
+          row-level security policies that decide whose records come back, and twelve demo
+          employees. Until it runs, the assistant has nobody to look up.</p>
+          <p>It is a Lambda rather than part of <code>terraform apply</code> because Aurora
+          sits in a private subnet with no route in from outside. Something inside the VPC
+          has to run the SQL.</p>
+          <pre><code>aws lambda invoke --function-name northwind-hr-setup-db \
+  --cli-read-timeout 300 setup.json
 cat setup.json</code></pre>
-          <p class="expect">Expect <code>{"employees": 12, "scripts_ran": true}</code>. Safe to run again: the second time it only resets the <code>hr_app</code> password.</p>
+          <p class="expect">Expect <code>{"employees": 12, "scripts_ran": true}</code>, in about 4 seconds. Safe to run again: the second run sees the tables and only resets the <code>hr_app</code> password. If it times out, Aurora was paused at zero capacity and is waking up. Run it again.</p>
         </li>
         <li>
           <h3>Upload the documents</h3>
           <p>Policy files first, the manifest last. The manifest upload starts ingestion.</p>
-          <pre><code>DOCS=$(terraform output -raw documents_bucket)
-aws s3 cp ../lambda/data/documents/ "s3://$DOCS/" --recursive --exclude manifest.json
-aws s3 cp ../lambda/data/documents/manifest.json "s3://$DOCS/"
+          <pre><code>DOCS=$(terraform -chdir=infra/terraform output -raw documents_bucket)
+
+aws s3 cp lambda/data/documents/ "s3://$DOCS/" --recursive --exclude manifest.json
+aws s3 cp lambda/data/documents/manifest.json "s3://$DOCS/"
 aws logs tail /aws/lambda/northwind-hr-ingest --follow</code></pre>
           <p class="expect">Expect <code>50 documents, 328 chunks indexed</code>. OpenSearch Serverless makes new documents searchable within about a minute.</p>
         </li>
         <li>
-          <h3>Build and upload the React app</h3>
-          <pre><code>terraform output -raw frontend_env &gt; ../frontend/.env.production
-cd ../frontend
+          <h3>Build and publish the web app</h3>
+          <p>This is the page employees actually use: the sign-in and the chat box. It is a
+          React app that builds into static files, which go to S3 and are served by
+          CloudFront.</p>
+          <pre><code>terraform -chdir=infra/terraform output -raw frontend_env &gt; frontend/.env.production
+
+cd frontend
 npm ci
 npm run build
-aws s3 sync dist/ "s3://$(terraform -chdir=../terraform output -raw frontend_bucket)/" --delete
-aws cloudfront create-invalidation --paths "/*" \
-  --distribution-id "$(terraform -chdir=../terraform output -raw cloudfront_distribution_id)"
-cd ../terraform</code></pre>
+cd ..
+
+FE=$(terraform -chdir=infra/terraform output -raw frontend_bucket)
+DIST=$(terraform -chdir=infra/terraform output -raw cloudfront_distribution_id)
+
+aws s3 sync frontend/dist/ "s3://$FE/" --delete
+aws cloudfront create-invalidation --distribution-id "$DIST" --paths '/*'</code></pre>
         <p><code>frontend/</code> is already in the repository with its
         <code>package.json</code> and <code>package-lock.json</code>. npm creates
         <code>node_modules/</code>, and the build creates <code>frontend/dist/</code>. Both
@@ -901,7 +916,8 @@ cd ../terraform</code></pre>
         <li>
           <h3>Give the demo users a password</h3>
           <p>Terraform created the users without sending email. An administrator sets the first password.</p>
-          <pre><code>POOL=$(terraform output -raw cognito_user_pool_id)
+          <pre><code>POOL=$(terraform -chdir=infra/terraform output -raw cognito_user_pool_id)
+
 for NAME in amara.diallo liam.fischer priya.raman dana.whitfield; do
   aws cognito-idp admin-set-user-password --user-pool-id "$POOL" \
     --username "$NAME@northwind.example" --password 'Pick-A-Demo-Passw0rd' --permanent
@@ -909,7 +925,7 @@ done</code></pre>
         </li>
         <li>
           <h3>Open the app</h3>
-          <pre><code>terraform output -raw app_url</code></pre>
+          <pre><code>terraform -chdir=infra/terraform output -raw app_url</code></pre>
           <p class="expect">Sign in as Amara. The first question after the database has been idle can take 15 seconds or more while Aurora resumes.</p>
         </li>
       </ol>
@@ -1535,7 +1551,7 @@ FROM request_log ORDER BY id DESC LIMIT 5;</code></pre>
             <tr><td>Small talk returns policies, or real questions get none</td><td>Relevance threshold not measured on these documents</td><td>Run the similarity report; set <code>min_best_similarity</code> between the two groups, not just below the lowest real question</td></tr>
             <tr><td>The same question passes one run and fails the next</td><td>The threshold sits inside the noise of approximate vector search</td><td>Move it further from the lowest real score, and set temperature to 0 before comparing runs at all</td></tr>
             <tr><td>A normal HR question is blocked</td><td>Prompt attack filter at HIGH</td><td>Lower it to MEDIUM in <code>bedrock.tf</code>, apply</td></tr>
-            <tr><td>Cognito "redirect_mismatch"</td><td>App opened at an address other than the CloudFront one</td><td>Use <code>terraform output app_url</code> exactly</td></tr>
+            <tr><td>Cognito "redirect_mismatch"</td><td>App opened at an address other than the CloudFront one</td><td>Use <code>terraform -chdir=infra/terraform output -raw app_url</code> exactly</td></tr>
             <tr><td>Terraform: domain already exists</td><td><code>cognito_domain_prefix</code> taken</td><td>Choose another prefix</td></tr>
           </tbody>
         </table>
