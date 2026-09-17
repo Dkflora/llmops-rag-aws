@@ -430,6 +430,7 @@ a different answer each run cannot gate anything.
 | Latency budget | Fail if p90 goes above your timeout minus a margin |
 | Cost per question | Fail if it jumps. A prompt edit that adds two chunks is a permanent bill increase |
 | Refusal cases | The system must still refuse. A model that got more helpful may have got more leaky |
+| Injection probes | Three are in the evaluation set. A weakened guardrail or prompt fails the run |
 | Citation validity | Every cited document should exist and be one the asker may read |
 | Guardrail probes | A known prompt injection should still be blocked at 0 tokens |
 | Index sanity | Chunk count within a few percent of the last run. A silent drop means a parser broke |
