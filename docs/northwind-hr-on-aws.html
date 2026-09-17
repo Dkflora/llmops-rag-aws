@@ -499,14 +499,17 @@
       </div>
 
       <div class="prose">
-        <p>The layers above stop things happening. The logs record what did happen: every
-        employee lookup in <code>employee_lookup_log</code>, every question in
-        <code>request_log</code>, and every HTTP request in the API access log. That is what
-        answers "who saw this salary, and when".</p>
+        <p>The logs record what happened: every employee lookup in
+        <code>employee_lookup_log</code>, every question in <code>request_log</code>, and
+        every HTTP request in the API access log. That is what answers "who saw this salary,
+        and when".</p>
       </div>
 
       <h3>Demo accounts</h3>
-      <p class="prose">Four of the twelve employees get a Cognito user, created in the Cognito step whichever path you took. The other eight exist in the database but cannot sign in, which is enough to show a manager seeing reports who have no login. Keep this list out of the app itself.</p>
+      <p class="prose">Four of the twelve employees get a Cognito login. The other eight
+      exist only in the <code>employees</code> table and cannot sign in. That is deliberate. Liam
+      has four direct reports and only one of them, Amara, has a login. Being in the records
+      and being able to sign in are separate things.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Sign in as</th><th>Role</th><th>Sees salaries of</th><th>Try asking</th></tr></thead>
