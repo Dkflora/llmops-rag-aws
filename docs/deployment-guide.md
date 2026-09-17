@@ -16,8 +16,23 @@ step at the end is not optional if this is a temporary environment.
 
 ### Get the code
 
+Import it into your own GitHub account rather than cloning ours. You then own
+the copy: you can commit to it, push to it, and keep it afterwards.
+
+1. Sign in to GitHub and open **https://github.com/new/import**
+2. **Your old repository's clone URL**:
+   `https://github.com/utrains/llmops-rag-aws`
+3. **Repository name**: `llmops-rag-aws`
+4. Public or private, your choice
+5. **Begin import**, and wait for it to finish
+
+Import copies the files and the history into a repository of your own. It is not
+a fork, so nothing links back to ours and nothing you push goes anywhere near it.
+
+Now clone **your** copy, using your own username:
+
 ```bash
-git clone https://github.com/utrains/llmops-rag-aws.git
+git clone https://github.com/YOUR-USERNAME/llmops-rag-aws.git
 cd llmops-rag-aws
 ```
 

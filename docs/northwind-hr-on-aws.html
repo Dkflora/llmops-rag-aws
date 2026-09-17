@@ -845,8 +845,14 @@
 
       <ol class="steps">
         <li>
-          <h3>Set your variables</h3>
-          <pre><code>git clone https://github.com/utrains/llmops-rag-aws.git
+          <h3>Get the code, and set your variables</h3>
+          <p>Import the repository into your own GitHub account rather than cloning ours.
+          You then own the copy and can push to it. Open
+          <strong>github.com/new/import</strong>, give it
+          <code>https://github.com/utrains/llmops-rag-aws</code> as the source, name it
+          <code>llmops-rag-aws</code>, and begin the import. It is not a fork: nothing links
+          back to ours.</p>
+          <pre><code>git clone https://github.com/YOUR-USERNAME/llmops-rag-aws.git
 cd llmops-rag-aws
 cp infra/terraform/terraform.tfvars.example infra/terraform/terraform.tfvars
 <span class="c"># edit cognito_domain_prefix: it must be unique, e.g. northwind-hr-jsmith</span></code></pre>

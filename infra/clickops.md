@@ -112,7 +112,7 @@ Your account ID: `aws sts get-caller-identity --query Account --output text`
 | AWS CLI v2 | `aws --version` |
 | Python 3.12 or newer, with pip | `python --version` |
 | Node 20 or newer | `node --version` |
-| This repository | `git clone https://github.com/utrains/llmops-rag-aws.git && cd llmops-rag-aws` |
+| This repository | Import `https://github.com/utrains/llmops-rag-aws` at github.com/new/import, then clone your own copy |
 | Git Bash, on Windows | the build scripts are `bash` scripts |
 
 Set a budget alarm before you build anything. Billing > Budgets > Create budget > Monthly cost

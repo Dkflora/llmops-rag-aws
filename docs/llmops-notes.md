@@ -193,6 +193,33 @@ through the Converse API so the model is a Terraform variable. We tested Lite as
 primary. It called the wrong tool and invented a citation, so it is good enough
 to degrade to and not good enough to lead with.
 
+### Where the prompt lives
+
+In the code. `SYSTEM_PROMPT` is a constant in `assistant.py`, so it is in git, it
+is reviewed in a pull request like anything else, and it ships inside the
+function zip. Rollback is `git revert` and a redeploy, about 20 seconds.
+
+The pressure to move it out is always the same: somebody who does not deploy code
+wants to edit it. The options, and what each costs:
+
+| Where | Change without deploying | Reviewed | History |
+|---|---|---|---|
+| A constant in the code | no | yes, in the pull request | git |
+| An environment variable | yes, a Terraform apply | only if the tfvars are reviewed | git, if committed |
+| SSM Parameter Store or AppConfig | yes, instantly | no, unless you build it | parameter versions |
+| Bedrock Prompt Management | yes | no, unless you build it | its own versions |
+
+The last two are how you let a non-engineer edit a prompt. Going that way means
+rebuilding what git was already giving you. Someone approves the change. The
+evaluation runs against it. You can tell afterwards which prompt produced which
+answer. Otherwise a one-word edit reaches production with no review and no
+way to find out what changed.
+
+Note the contrast with the guardrail, which deliberately does not live in the
+code. It is a policy object with numbered versions, and the application pins a
+version, so security can edit the draft without touching a deployment. Different
+problem, different answer: a guardrail is policy, a prompt is logic.
+
 ### Putting it in Slack or Teams
 
 It is wiring, not AI work.
