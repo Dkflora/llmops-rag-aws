@@ -12,16 +12,6 @@ const SUGGESTIONS = [
   "What is the mileage reimbursement rate?",
 ];
 
-// "Amara Diallo" becomes "AD", for the little circle beside their messages.
-function initials(name) {
-  return (name || "")
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join("");
-}
-
 // A question can take a while when Aurora is waking from zero, so count the
 // seconds rather than leave somebody wondering whether it is stuck.
 function Thinking() {
@@ -34,15 +24,11 @@ function Thinking() {
 
   return (
     <div className="row assistant">
-      <div className="mark small" aria-hidden="true">N</div>
-      <div className="bubble">
-        <div className="thinking" role="status">
-          <span className="dots" aria-hidden="true">
-            <i /><i /><i />
-          </span>
-          <span>Looking for the answer</span>
-          {seconds >= 4 && <span className="elapsed">{seconds}s</span>}
-        </div>
+      <div className="thinking" role="status">
+        <span className="dots" aria-hidden="true">
+          <i /><i /><i />
+        </span>
+        {seconds >= 4 && <span className="elapsed">{seconds}s</span>}
       </div>
     </div>
   );
@@ -151,7 +137,6 @@ export default function Chat({ signIn, onSignOut }) {
   if (error && !me) {
     return (
       <div className="login">
-        <div className="mark" aria-hidden="true">N</div>
         <h1>Northwind HR Assistant</h1>
         <p>{error}</p>
         <button onClick={onSignOut}>Sign out</button>
@@ -167,11 +152,8 @@ export default function Chat({ signIn, onSignOut }) {
     <div className="layout">
       <aside className="sidebar">
         <div className="who">
-          <div className="mark small user" aria-hidden="true">{initials(me.full_name)}</div>
-          <div className="who-text">
-            <strong>{me.full_name}</strong>
-            <span>{me.job_title} · {me.department}</span>
-          </div>
+          <strong>{me.full_name}</strong>
+          <span>{me.job_title} · {me.department}</span>
         </div>
 
         <button className="new-chat" onClick={newChat}>
@@ -197,17 +179,13 @@ export default function Chat({ signIn, onSignOut }) {
 
       <main className="conversation">
         <header className="topbar">
-          <div className="mark small" aria-hidden="true">N</div>
           <h1>Northwind HR Assistant</h1>
-          <span className="dot" aria-hidden="true" />
-          <span className="dot-label">Online</span>
         </header>
 
         <div className="scroller">
           <div className="messages">
             {messages.length === 0 && !waiting && (
               <div className="empty">
-                <div className="mark" aria-hidden="true">N</div>
                 <h2>Hello, {me.full_name.split(" ")[0]}</h2>
                 <p>Ask about company policy, or about your own pay and time off.</p>
                 <div className="suggestions">
@@ -222,9 +200,6 @@ export default function Chat({ signIn, onSignOut }) {
 
             {messages.map((message, index) => (
               <div key={index} className={`row ${message.role}`}>
-                <div className={message.role === "user" ? "mark small user" : "mark small"} aria-hidden="true">
-                  {message.role === "user" ? initials(me.full_name) : "N"}
-                </div>
                 <div className="bubble">
                   <Markdown>{message.content}</Markdown>
                   {message.sources?.length > 0 && (

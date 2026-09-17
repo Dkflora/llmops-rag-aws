@@ -14,7 +14,6 @@ export function CognitoSignIn() {
   if (auth.error) {
     return (
       <div className="login">
-        <div className="mark" aria-hidden="true">N</div>
         <h1>Northwind HR Assistant</h1>
         <p>Sign-in didn't work: {auth.error.message}</p>
         <button onClick={() => auth.signinRedirect()}>Try again</button>
@@ -25,7 +24,6 @@ export function CognitoSignIn() {
   if (!auth.isAuthenticated) {
     return (
       <div className="login">
-        <div className="mark" aria-hidden="true">N</div>
         <h1>Northwind HR Assistant</h1>
         <p>Sign in with your work account to start chatting.</p>
         <button onClick={() => auth.signinRedirect()}>Sign in</button>

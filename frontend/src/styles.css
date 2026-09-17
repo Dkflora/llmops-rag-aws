@@ -69,7 +69,6 @@ button:disabled { cursor: default; }
   text-align: center;
   animation: rise 0.4s ease both;
 }
-.login .mark { margin: 0 auto 4px; }
 .login h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
 .login p { margin: 0; color: var(--muted); font-size: 15px; }
 .login button {
@@ -84,23 +83,6 @@ button:disabled { cursor: default; }
 .login button:hover { filter: brightness(1.08); }
 .login button:active { transform: translateY(1px); }
 
-/* The teal circle with the N, on the sign-in page and beside every answer */
-.mark {
-  width: 34px;
-  height: 34px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-ink);
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: -0.02em;
-}
-.mark.small { width: 28px; height: 28px; font-size: 12px; }
-.mark.user { background: var(--user-bubble); color: var(--user-ink); }
-
 /* ------------------------------------------------------- signed-in layout */
 .layout { display: grid; grid-template-columns: 276px 1fr; height: 100%; }
 
@@ -113,10 +95,9 @@ button:disabled { cursor: default; }
   gap: 12px;
   min-height: 0;
 }
-.who { display: flex; align-items: center; gap: 10px; padding: 4px 6px 10px; }
-.who-text { display: grid; gap: 1px; min-width: 0; }
-.who-text strong { font-size: 14px; }
-.who-text span {
+.who { display: grid; gap: 1px; padding: 4px 6px 10px; min-width: 0; }
+.who strong { font-size: 14px; }
+.who span {
   color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
@@ -189,14 +170,6 @@ button:disabled { cursor: default; }
   z-index: 2;
 }
 .topbar h1 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-.topbar .dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #35c08a;
-  margin-left: auto;
-}
-.topbar .dot-label { color: var(--faint); font-size: 12px; }
 
 .scroller { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
 .messages {
@@ -205,30 +178,25 @@ button:disabled { cursor: default; }
   padding: 26px 24px 8px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
 }
 
-.row { display: flex; gap: 12px; align-items: flex-start; animation: rise 0.28s ease both; }
-.row.user { flex-direction: row-reverse; }
+.row { display: flex; animation: rise 0.28s ease both; }
+.row.user { justify-content: flex-end; }
 
 .bubble {
-  padding: 12px 16px;
-  border-radius: var(--radius);
   line-height: 1.6;
   font-size: 15px;
-  max-width: 100%;
   overflow-wrap: anywhere;
 }
-.row.assistant .bubble {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-top-left-radius: 4px;
-  box-shadow: var(--shadow);
-}
+.row.assistant .bubble { max-width: 100%; }
 .row.user .bubble {
+  max-width: 78%;
   background: var(--user-bubble);
   color: var(--user-ink);
-  border-top-right-radius: 4px;
+  padding: 11px 15px;
+  border-radius: 16px;
+  border-bottom-right-radius: 5px;
 }
 .bubble p { margin: 0 0 10px; }
 .bubble p:last-child { margin-bottom: 0; }
@@ -253,7 +221,7 @@ button:disabled { cursor: default; }
 }
 
 /* --------------------------------------------------------- thinking state */
-.thinking { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; }
+.thinking { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; padding: 4px 0; }
 .dots { display: inline-flex; gap: 4px; }
 .dots i {
   width: 6px;
@@ -282,7 +250,6 @@ button:disabled { cursor: default; }
 
 /* ------------------------------------------------------------ empty state */
 .empty { text-align: center; padding: 8vh 0 2vh; animation: rise 0.4s ease both; }
-.empty .mark { margin: 0 auto 14px; width: 44px; height: 44px; font-size: 17px; }
 .empty h2 { margin: 0 0 6px; font-size: 20px; letter-spacing: -0.01em; }
 .empty p { margin: 0 0 22px; color: var(--muted); font-size: 15px; }
 .suggestions { display: grid; gap: 8px; max-width: 460px; margin: 0 auto; }
