@@ -55,6 +55,10 @@ Budget more time for this than feels reasonable.
 
 **Popular choices, and what people reach for:**
 
+- **LangChain and LlamaIndex document loaders** are where most people start.
+  There is a loader per format, and under the hood most of them wrap the
+  libraries below. Convenient, at the cost of a dependency between you and the
+  parser when something reads badly.
 - **Unstructured.io** is the usual default for mixed corpora. It handles many
   formats and returns typed elements.
 - **LlamaParse** and similar hosted parsers do better on complex PDFs and
@@ -65,10 +69,11 @@ Budget more time for this than feels reasonable.
   not a checkbox.
 - **Docling**, **Apache Tika** for broad format coverage in a JVM stack.
 
-**In this project.** `documents.py` has six small readers and no framework. The
-CSV reader returns **one section per row**, which is the only reason "is
-Juneteenth a holiday" is answerable at all. That single decision matters more
-than the embedding model.
+**In this project.** `documents.py` reads the six formats directly with `pypdf`,
+`python-docx` and the standard library, with no loader framework. The CSV reader
+returns **one section per row**, which is the only reason "is Juneteenth a
+holiday" is answerable at all. That single decision matters more than the
+embedding model.
 
 **Tables need deciding, not parsing.** A row is usually one fact, so a row
 should usually become one chunk. "The parser handles it" is not a plan. Prove it
@@ -83,8 +88,15 @@ with a question that can only be answered from a single row.
 | Split on what? | Headings first, then size. Splitting purely on character count cuts sentences in half |
 | Does the chunk know where it came from? | It must. Title, section and document id travel with the text, or you cannot cite |
 
-**In this project.** 700 characters with 80 overlap, split on headings first, and
-each chunk carries `title`, `section`, `filename`, `access_level` and `status`.
+**In this project.** Sections are split by LangChain's
+`RecursiveCharacterTextSplitter` at 700 characters with 80 of overlap. It tries
+paragraph breaks first, then line breaks, then sentences, and only cuts inside a
+word as a last resort. Each section is split on its own, so a chunk never mixes
+two topics. Every chunk carries `title`, `section`, `filename`, `access_level`
+and `status`.
+
+That splitter is the one framework dependency in the pipeline. Reading the files
+is our own code; cutting the text is not.
 
 **A chunk size quoted without reference to your documents is a guess.** Measure
 it with an evaluation set, the same way you measure the relevance floor.
