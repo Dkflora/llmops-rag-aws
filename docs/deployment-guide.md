@@ -262,13 +262,11 @@ employees. Safe to run twice: the second run sees the tables already exist and
 only resets the `hr_app` password from Secrets Manager. If it times out, Aurora
 was paused at zero capacity and is waking up. Run it again.
 
-**Is this how a company does it?** Not quite. The database is in a private subnet with no route in from outside,
-so something inside the VPC has to run the SQL, and a Lambda is a reasonable
-way to do that. What a company would change is the SQL itself. Here,
-`lambda/db/` holds three files that are run start to finish. A real system uses
-a migration tool (Flyway, Liquibase, Alembic, sqitch), where each change is a
-numbered file, the tool records which ones have already run, and it applies only
-the new ones. That is what lets you change a live schema without dropping it,
+**Is this how a company does it?** Not quite. The database is in a private subnet with no route in from outside. Something
+inside the VPC has to run the SQL, and a Lambda is a reasonable way to do it. What a company would change is the SQL itself. Here,
+`lambda/db/` holds three files that are run start to finish. A real system uses a
+migration tool: Flyway, Liquibase, Alembic, sqitch. Each change is a numbered
+file. The tool records which ones have run and applies only the new ones. That is what lets you change a live schema without dropping it,
 and roll back when a change is wrong.
 
 Running it by hand from your laptop is also the lab version. In a company this
@@ -571,8 +569,8 @@ Two resource blocks, five log groups, because `for_each` runs the first one once
 per function. `local.name` is `northwind-hr` and `each.key` is `chat`, `ingest`,
 `setup-db` or `evaluate`, which is where the names in the table above come from.
 
-**If you do not create the log group, Lambda creates it on first invocation, and
-the one it creates never expires.** Declaring it in Terraform is the only way to
+**If you do not create the log group, Lambda creates it on first invocation.**
+The one it creates never expires. Declaring it in Terraform is the only way to
 set retention. The functions declare
 `depends_on` the log groups so Terraform makes them first, rather than racing
 Lambda for the name.
@@ -747,11 +745,10 @@ teardown against the services themselves.
 
 ## Where to go next
 
-The lab ends here. [`llmops-notes.md`](llmops-notes.md) is the part the job is
-about: the decisions behind indexing and retrieval and the questions each one
-raises, what a call actually costs with real numbers, what Bedrock publishes
-to CloudWatch, what this application stores as an audit trail, and what the
-evaluation should be gating in a pipeline.
+The lab ends here. [`llmops-notes.md`](llmops-notes.md) covers the rest of the
+job. The decisions behind indexing and retrieval. What a call costs, with real
+numbers. What Bedrock publishes to CloudWatch, what this application stores as
+an audit trail, and what the evaluation should gate in a pipeline.
 
 ---
 

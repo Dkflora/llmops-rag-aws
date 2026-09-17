@@ -212,17 +212,17 @@ they release, the security group and its subnets wait. The security group alone 
 minutes 40 seconds. Nothing is stuck.
 
 **A fallback has to fit inside your timeout.** Left on its defaults the AWS SDK retried a
-dead model for 15 of the 29 available seconds, so the failover ran out of time and the request
+dead model for 15 of the 29 available seconds. The failover ran out of time and the request
 failed anyway. With `max_attempts=1` the same failure produces a correct answer in 6 seconds.
 
 **Thresholds are measured, not guessed.** On these documents small talk scores 0.106 to 0.148 and
-real questions 0.361 to 0.656. A floor of 0.35 sat 0.011 below the lowest real question, and
-approximate vector search moves a score by more than that between runs, so one question passed
-and failed intermittently. The floor is 0.25, in the gap between the two groups, and
+real questions 0.361 to 0.656. A floor of 0.35 sat 0.011 below the lowest real question.
+Approximate vector search moves a score by more than that between runs, so one question
+passed and failed intermittently. The floor is 0.25, in the gap between the two groups, and
 temperature is 0 so that two evaluation runs can be compared at all.
 
 **Anthropic models need a one-time use-case form per AWS account.** Bedrock reports the model
-as ACTIVE in the catalog before you are allowed to call it, and the first real request fails
+as ACTIVE in the catalog before you are allowed to call it. The first real request then fails
 with `Model use case details have not been submitted for this account`. Amazon's own models
 need no form, which is why they are the default.
 

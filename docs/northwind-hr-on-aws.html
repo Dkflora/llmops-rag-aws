@@ -1007,7 +1007,7 @@ aws logs tail /aws/lambda/northwind-hr-evaluate</code></pre>
         <pre><code>PASS  Amara Diallo    What is my salary?
 PASS  Liam Fischer    What is Noah Bennett's salary?
 FAIL  Amara Diallo    Can I work from another country?     missing '30 days'</code></pre>
-        <p><strong>The named fact is the useful part.</strong> It tells you whether to look at
+        <p><strong>Read the named fact.</strong> It tells you whether to look at
         the documents, the retrieval settings or the prompt. A score on its own does not.</p>
         <p>Temperature is set to 0 so two runs can be compared. A test that gives a different
         answer each time cannot tell you whether your change helped.</p>
@@ -1423,11 +1423,10 @@ FROM request_log ORDER BY id DESC LIMIT 5;</code></pre>
         questions before assuming it cannot.</p>
 
         <h3>Putting it in Slack or Teams</h3>
-        <p>This comes up immediately, and it is worth being clear about what kind of work it
-        is. The React app is one client of the API. Slack or Teams would be another. The
-        retrieval, the access filter, the row-level security, the prompt and the model do not
-        change at all, because they sit behind the API and never knew which client was
-        calling.</p>
+        <p>It is wiring, not AI work.</p>
+        <p>The React app is one client of the API. Slack or Teams would be another. The
+        retrieval, the access filter, the row-level security, the prompt and the model do
+        not change. They sit behind the API and never knew which client was calling.</p>
         <p>What you write is an adapter: receive the platform's webhook, verify its signature,
         map the sender to an employee, call <code>POST /api/chat</code>, and format the reply.
         That is ordinary application code, not AI work.</p>
@@ -1472,7 +1471,7 @@ FROM request_log ORDER BY id DESC LIMIT 5;</code></pre>
     <section id="clickops">
       <div class="prose">
         <h2>Appendix: building it by hand in the console</h2>
-        <p>Optional, and not part of the four hours. A console screen does show you choices a Terraform file hides, so this is worth doing once, on your own time, for the services you want to understand properly.</p>
+        <p>Optional, and not part of the four hours. A console screen shows you choices a Terraform file hides. Do it once, on your own time, for the services you want to understand properly.</p>
         <p><strong>The full walkthrough is <a href="../infra/clickops.md">infra/clickops.md</a></strong>,
         twenty numbered steps with every setting and why it is set that way. Expect a day.
         The order is not arbitrary: each step needs something the one before it produced.</p>

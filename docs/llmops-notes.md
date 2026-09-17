@@ -189,9 +189,9 @@ What actually decides it:
 | Does data have to stay in one geography? | Use a regional inference profile (`us.`, `eu.`) rather than `global.` |
 
 **In this project.** Nova Pro with Nova Lite as the fallback, both reached
-through the Converse API so the model is a Terraform variable. We tested Lite as
-the primary: it called the wrong tool and invented a citation, so it is good
-enough to degrade to and not good enough to lead with.
+through the Converse API so the model is a Terraform variable. We tested Lite as the
+primary. It called the wrong tool and invented a citation, so it is good enough
+to degrade to and not good enough to lead with.
 
 ### Putting it in Slack or Teams
 
@@ -247,8 +247,8 @@ Three things follow from that:
    Serverless at roughly $7 a day dwarfs fourteen cents of inference. The
    infrastructure that exists whether or not anyone asks a question is the bill.
 3. **Nova Pro is 13x the price of Nova Lite.** That is the real fallback
-   tradeoff, and the reason to check whether the cheap model is good enough for
-   your actual questions rather than assuming.
+   tradeoff. Check whether the cheap model handles your questions rather than
+   assuming it cannot.
 
 ### Working out cost per call yourself
 
@@ -283,9 +283,8 @@ You get `Invocations`, `InputTokenCount`, `OutputTokenCount`,
 `InvocationLatency`, `InvocationClientErrors`, `InvocationServerErrors`,
 `InvocationThrottles` and `EstimatedTPMQuotaUsage`, per model.
 
-**A nice thing to show.** In this account, the Claude model we could not get
-access to still appears, with `Invocations: 2` and
-`InvocationClientErrors: 2` and no tokens at all. The two failed access attempts
+In this account the Claude model we could not get access to still appears,
+with `Invocations: 2`, `InvocationClientErrors: 2` and no tokens. The two failed access attempts
 are permanently visible, months later, and cost nothing. That is what a
 client-side rejection looks like in metrics.
 
