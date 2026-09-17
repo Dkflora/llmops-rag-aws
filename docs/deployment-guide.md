@@ -682,17 +682,22 @@ which tools ran, or whether the answer came from the vector search or the
 keyword fallback. None of that is infrastructure, so nothing in the platform
 records it.
 
-That is why the application writes its own row per question, which you already
-queried in step 8:
+That is why the application writes its own row per question. You queried it in
+step 8:
 
 ```sql
 SELECT question, tools_used, input_tokens, output_tokens, latency_ms
 FROM request_log ORDER BY id DESC LIMIT 5;
 ```
 
-This is the split to take away from the whole lab. **Your platform gives you
-infrastructure metrics. Product metrics you have to write yourself**, and for an
-LLM application the product metrics are the ones with money attached.
+CloudWatch knows the function ran and how long it took. It does not know that
+the question cost 1,944 input tokens, that `search_hr_policies` answered it, or
+who asked. Only the application knows those, so only the application can record
+them.
+
+That matters because tokens are the bill. A prompt change that adds two chunks
+to every question raises your cost permanently, and nothing in CloudWatch will
+show it. `request_log` will.
 
 ---
 

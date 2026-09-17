@@ -299,9 +299,12 @@ whether the answer was any good. It reports per model, not per question, so you
 cannot attribute a spike to a user or a feature.
 
 That is why the application writes `request_log`: one row per question with the
-question, the tools used, both token counts and the latency. **Platform metrics
-come free. Product metrics you write yourself**, and for an LLM application the
-product metrics are the ones with money attached.
+question, the tools used, both token counts and the latency. CloudWatch knows the function ran
+and how long it took. It does not know the token count, the tools, or who asked.
+Only the application knows those, so only the application can record them.
+
+Tokens are the bill. A prompt change that adds two chunks to every question
+raises your cost permanently, and nothing in CloudWatch will show it.
 
 ### Bedrock model invocation logging
 
