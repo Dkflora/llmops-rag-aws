@@ -45,7 +45,7 @@ source.
 
 Budget more time for this than feels reasonable.
 
-| Format | What bites you |
+| Format | What goes wrong |
 |---|---|
 | PDF | Text-layer PDFs are fine. Scans are images and need OCR. Two-column layouts read across the columns unless the parser understands them |
 | DOCX | Tables and headers are easy to lose. Tracked changes may still be in there |
@@ -91,7 +91,7 @@ it with an evaluation set, the same way you measure the relevance floor.
 
 ### Embedding
 
-| Ask | Why |
+| Ask | Why it matters |
 |---|---|
 | Which model, and what dimension? | Storage and latency scale with dimension. More is not free |
 | Same model for documents and questions? | It must be. Different models produce incompatible vectors |
@@ -116,7 +116,7 @@ cost about 160 times more.
 
 ### The vector store
 
-| Ask | Why |
+| Ask | Why it matters |
 |---|---|
 | Does it filter *inside* the search? | If it filters afterwards you cannot do access control properly |
 | What does it cost when idle? | Many vector stores bill for existing, not for use |
@@ -125,7 +125,7 @@ cost about 160 times more.
 
 **Popular choices:**
 
-| Store | When people pick it |
+| Store | Typically chosen when |
 |---|---|
 | OpenSearch / Elasticsearch | You want hybrid search and already run it. This project |
 | pgvector in PostgreSQL | You already have Postgres and do not want another system. The POC |
@@ -168,7 +168,7 @@ Roughly seventy have on-demand pricing.
 
 What actually decides it:
 
-| Ask | Why |
+| Ask | Why it matters |
 |---|---|
 | Can you call it *today*, in your account and region? | Anthropic models need a one-time use case form. That is a schedule risk, not a technical one |
 | Does it support tool use? | This whole design depends on it |
