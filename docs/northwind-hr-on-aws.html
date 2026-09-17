@@ -1079,6 +1079,9 @@ done</code></pre>
         <pre><code>aws lambda invoke --function-name northwind-hr-evaluate --cli-read-timeout 900 eval.json
 cat eval.json
 aws logs tail /aws/lambda/northwind-hr-evaluate</code></pre>
+        <p>Or read it in the console: <strong>CloudWatch &gt; Log groups &gt;</strong>
+        <code>/aws/lambda/northwind-hr-evaluate</code> <strong>&gt; Log streams</strong>, newest
+        first. Same lines, and easier to scroll back through in front of a room.</p>
         <p>The log gives one line per question, and a failure names the fact that was missing
         rather than just lowering a score:</p>
         <pre><code>PASS  Amara Diallo    What is my salary?
@@ -1119,7 +1122,6 @@ print([t for t,n in c.items() if n&gt;1])"</code></pre>
         <p>Run it here and you get one pair, the expense policy, where the two documents cover
         different sections rather than contradicting each other.</p>
         </div>
-      </div>
     </section>
 
         <!-- ============================================================ -->
@@ -1163,6 +1165,9 @@ print([t for t,n in c.items() if n&gt;1])"</code></pre>
 
         <h3>Five log groups</h3>
         <p>One per function, plus the API. Retention is 14 days, set in Terraform.</p>
+        <p>Everything below works from the console too, and in a room the console is usually
+        the better route. The CLI is here because it is quicker to paste and quicker to
+        show.</p>
         <pre><code>aws logs describe-log-groups --log-group-name-prefix /aws/lambda/northwind-hr \
   --query 'logGroups[].[logGroupName,retentionInDays]' --output table
 
@@ -1176,6 +1181,22 @@ aws logs tail /aws/lambda/northwind-hr-chat --follow --format short</code></pre>
         rejected by the JWT authorizer never reaches Lambda, so a 401 appears only here. It
         also never cost you an invocation.</p>
         <pre><code>aws logs tail /aws/apigateway/northwind-hr-api --since 30m --format short</code></pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>What you want</th><th>Where in the console</th></tr></thead>
+          <tbody>
+            <tr><td>Read one function's output</td><td><strong>CloudWatch &gt; Log groups &gt;</strong> <code>/aws/lambda/northwind-hr-evaluate</code> <strong>&gt; Log streams &gt;</strong> newest</td></tr>
+            <tr><td>The same, starting from the function</td><td><strong>Lambda &gt; Functions &gt;</strong> <code>northwind-hr-evaluate</code> <strong>&gt; Monitor &gt; View CloudWatch logs</strong></td></tr>
+            <tr><td>Search across a log group</td><td>Open the log group and use <strong>Search all log streams</strong></td></tr>
+            <tr><td>Query many invocations</td><td><strong>CloudWatch &gt; Logs Insights</strong>, pick the log group, run a query</td></tr>
+            <tr><td>Invocations, errors, duration</td><td><strong>Lambda &gt; Functions &gt;</strong> the function <strong>&gt; Monitor</strong></td></tr>
+            <tr><td>Token counts per model</td><td><strong>CloudWatch &gt; Metrics &gt; All metrics &gt; Bedrock &gt; By Model Id</strong></td></tr>
+            <tr><td>Alarm state</td><td><strong>CloudWatch &gt; Alarms</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
 
         <div class="callout">
           <h4>Where the log groups come from, which is not where people look</h4>
