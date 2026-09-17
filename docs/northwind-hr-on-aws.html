@@ -1006,8 +1006,52 @@ done</code></pre>
     <section id="verify">
       <div class="prose">
         <h2>Verify and evaluate</h2>
-        <h3>Check access in the browser</h3>
-        <p>Use the demo accounts table above. For each person, ask one question they should get answered and one they should be refused.</p>
+                <h3>Check access in the browser</h3>
+        <p>Sign in as each of the four and ask both questions. Every figure below comes from
+        the seed data, so a different answer means something is wrong.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signed in as</th><th>Gets an answer</th><th>Gets refused</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Amara Diallo</strong><br>Software Engineer II</td>
+              <td>"What is my salary?" <strong>118,000</strong><br>
+                  "How many holiday days can I carry into next year?" <strong>5</strong></td>
+              <td>"What is Noah Bennett's salary?"<br>
+                  "What is the salary band for an L5 role?"</td>
+            </tr>
+            <tr>
+              <td><strong>Liam Fischer</strong><br>Engineering Manager</td>
+              <td>"What is Noah Bennett's salary?" <strong>146,000</strong>, Noah reports to him<br>
+                  "Who approves an offer above the band?" from the manager-only matrix</td>
+              <td>"What is Grace Okafor's salary?" She is in Sales and reports to Kenji Tanaka</td>
+            </tr>
+            <tr>
+              <td><strong>Priya Raman</strong><br>HR Manager</td>
+              <td>"What is Grace Okafor's salary?" <strong>108,000</strong><br>
+                  "What is the salary band for an L5 role?" <strong>152,000 to 192,000</strong>, cited</td>
+              <td>"How much severance does an L8 executive receive?"</td>
+            </tr>
+            <tr>
+              <td><strong>Dana Whitfield</strong><br>COO</td>
+              <td>"How much severance does an L8 executive receive?" <strong>12 months</strong><br>
+                  Everything the other three can see</td>
+              <td>Nothing. Exec reads all four access levels</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <p>Two different mechanisms produce those refusals, and it is worth noticing which is
+        which. The salary refusals come from row-level security in Aurora: Liam is refused
+        Grace's record because Postgres will not return the row. The document refusals come
+        from the access filter inside the vector search: Amara is refused the L5 band because
+        Compensation Bands 2026 is <code>hr_only</code> and never becomes a candidate.</p>
+        <p>Priya shows the two apart. She can read every employee record and every
+        <code>hr_only</code> document, and is still refused the severance guidelines, because
+        those are <code>exec_only</code>. Seniority in the org chart and access to documents
+        are separate things.</p>
 
         <h3>Run the evaluation</h3>
         <p>Fourteen questions with a known right answer. Five check access control on employee

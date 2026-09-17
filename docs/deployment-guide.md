@@ -471,15 +471,28 @@ Ask the **same question** as different people.
 
 | Sign in as | Ask | What happens |
 |---|---|---|
+| amara | `What is my salary?` | **118,000** |
 | amara | `What is Noah Bennett's salary?` | refused |
-| liam | `What is Noah Bennett's salary?` | **146,000**. Liam is his manager |
+| liam | `What is Noah Bennett's salary?` | **146,000**. Noah reports to him |
+| liam | `What is Grace Okafor's salary?` | refused. She is in Sales, under Kenji Tanaka |
+| priya | `What is Grace Okafor's salary?` | **108,000**. HR sees all twelve |
 | amara | `What is the salary band for an L5 role?` | not found |
 | priya | `What is the salary band for an L5 role?` | **152,000 to 192,000**, with a citation |
+| priya | `How much severance does an L8 executive receive?` | refused |
+| dana | `How much severance does an L8 executive receive?` | **12 months** |
 
-Two different mechanisms are doing that. Salaries are protected row by row
-inside PostgreSQL. The compensation bands document is protected by an access
-level filter applied inside the vector search, so a document Amara may not read
-is never even a candidate.
+Every figure there comes from the seed data, so a different answer means
+something is wrong.
+
+Two different mechanisms produce those refusals. Salaries are protected row by
+row inside PostgreSQL, which is why Liam is refused Grace's record. Documents
+are protected by an access level filter applied inside the vector search, which
+is why the compensation bands never become a candidate for Amara.
+
+Priya separates the two. She reads every employee record and every `hr_only`
+document, and is still refused the severance guidelines, because those are
+`exec_only`. Seniority in the org chart and access to documents are not the
+same thing.
 
 ### Prove it uses the current policy
 
