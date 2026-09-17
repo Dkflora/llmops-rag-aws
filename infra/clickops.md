@@ -188,7 +188,7 @@ the rest) are about 107 MB unpacked and change perhaps twice a term. The applica
 **Why the layer script uses `--platform manylinux2014_x86_64`.** Lambda runs Linux. `psycopg`
 and `lxml` contain compiled code, and the Windows or macOS build of them will not load there.
 Those flags tell pip to fetch the Linux wheels no matter what machine you are on, which is
-why you do not need Docker to build a Lambda package.
+why the same build works on macOS, Windows or Linux.
 
 Check what you produced before uploading it:
 

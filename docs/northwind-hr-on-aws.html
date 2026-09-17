@@ -843,12 +843,12 @@ cp infra/terraform/terraform.tfvars.example infra/terraform/terraform.tfvars
         </li>
         <li>
             <h4>Build the two zip files</h4>
-            <p>Lambda runs a zip plus a shared layer, not a container image, so there is no
-            registry to create and nothing to push.</p>
+            <p>Two zips. One holds the libraries and all four functions share it. The other
+            holds the application code.</p>
             <pre><code>bash scripts/build-layer.sh       <span class="c"># build/layer.zip     ~33 MB   the libraries</span>
 bash scripts/build-function.sh    <span class="c"># build/function.zip  ~26 KB   our code</span></code></pre>
             <p>The layer script pulls Linux wheels with <code>--platform manylinux2014_x86_64</code>,
-            so you do not need Docker to build a Lambda package on Windows or macOS.</p>
+            so it produces the same package whether you run it on macOS, Windows or Linux.</p>
           </li>
           <li>
           <h3>Create everything else</h3>

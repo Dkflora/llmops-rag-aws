@@ -220,8 +220,8 @@ function zip holds your code and changes constantly. All four Lambda functions
 share the one layer.
 
 The layer script downloads Linux wheels directly with
-`--platform manylinux2014_x86_64`, so you do not need Docker to build a Lambda
-package on macOS or Windows.
+`--platform manylinux2014_x86_64`, so it produces the same package whether you
+run it on macOS, Windows or Linux.
 
 ---
 
