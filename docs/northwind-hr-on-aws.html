@@ -183,7 +183,7 @@
       <li><a href="#overview">Architecture</a></li>
       <li><a href="#from-poc">From local POC to production</a></li>
       <li><a href="#request">One question, step by step</a></li>
-      <li><a href="#security">Who can see what</a></li>
+      <li><a href="#security">Layers of defence</a></li>
       <li><a href="#access-levels">How a document gets its access level</a></li>
       <li><a href="#prereqs">Before you build</a></li>
       <li><a href="#code">The Lambda code</a></li>
@@ -477,7 +477,7 @@
     <!-- ============================================================ -->
     <section id="security">
       <div class="prose">
-        <h2>Who can see what</h2>
+        <h2>Layers of defence</h2>
         <p>Each layer stops a different mistake or attack, so no single bug exposes a salary.</p>
       </div>
       <div class="table-wrap">
@@ -494,9 +494,15 @@
             <tr><td>Least-privilege database user</td><td><code>hr_app</code> can't update salaries or read the logs it writes</td><td><code>02_security.sql</code></td></tr>
             <tr><td>IAM role per function</td><td>The chat function can't write the index. Ingestion can't read the database</td><td>IAM console: Roles, and the OpenSearch data access policy</td></tr>
             <tr><td>Private subnets, no internet route</td><td>Data leaving through the network. Aurora has no public address</td><td>VPC console: Subnets, Route tables, Endpoints</td></tr>
-            <tr><td>Audit trail</td><td>Nothing: it proves what happened. Every lookup, question and API call is recorded</td><td><code>employee_lookup_log</code>, <code>request_log</code>, API access logs</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="prose">
+        <p>Those ten prevent. One more records: every employee lookup goes to
+        <code>employee_lookup_log</code>, every question to <code>request_log</code>, and
+        every HTTP request to the API access log. That stops nothing. It is how you answer
+        "who saw this salary, and when" after the fact.</p>
       </div>
 
       <h3>Demo accounts</h3>
