@@ -21,8 +21,6 @@ retrieval saves you.
 
 ### Where does the data come from?
 
-The first question, and the one most often skipped.
-
 | Ask | Why it matters |
 |---|---|
 | Who owns these documents, and who decides what is published? | You need a human owner for "which of these two is current" |
@@ -45,8 +43,7 @@ source.
 
 ### Loading and parsing
 
-Budget more time for this than feels reasonable. It is the stage where the
-work is least interesting and most consequential.
+Budget more time for this than feels reasonable.
 
 | Format | What bites you |
 |---|---|
@@ -186,7 +183,7 @@ enough to degrade to and not good enough to lead with.
 
 ### Putting it in Slack or Teams
 
-This question arrives early, and the answer is that it is wiring, not AI work.
+It is wiring, not AI work.
 
 The React app is one client of the API. Slack or Teams would be another. The
 retrieval, the access filter, the row-level security, the prompt and the model do
@@ -229,7 +226,7 @@ Actual usage for this project, read from CloudWatch:
 **$0.0009**. A single question is two or three calls because of the tool loop,
 so call it a fifth of a cent per question.
 
-Three things worth saying out loud:
+Three things follow from that:
 
 1. **Input tokens dominate.** 144,232 in against 7,593 out. RAG stuffs retrieved
    text into every prompt, so the corpus you send is the bill. Sending 8 chunks
@@ -307,7 +304,7 @@ same care as the database.
 
 ## Part 5: The audit trail
 
-Yes, calls are stored. Four tables, and they are not all the same kind of thing:
+Yes. Four tables, holding different things:
 
 | Table | What it holds | Who can read it |
 |---|---|---|
@@ -344,7 +341,7 @@ had no permission to change it.
 
 ## Part 6: What belongs in the pipeline
 
-The evaluation set is not a thing you run when you remember. It is a gate.
+The evaluation set is a gate, not something you run when you remember.
 
 ### Run on every change
 
