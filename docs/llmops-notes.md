@@ -339,10 +339,45 @@ and here that is enforced by Postgres rather than promised in a code review.
 Try it: query `request_log` with the app user and you get
 `permission denied for table request_log`.
 
-**What is missing, and worth saying so.** There is no retention policy on either
-log, no export to anywhere durable, and no alert on unusual access patterns. A
-real deployment would need all three, plus a decision about how long you keep
-questions that contain personal information.
+### How much does that log grow?
+
+Less than people expect. A `request_log` row is about 190 bytes, most of it the
+question text, and a `employee_lookup_log` row is about 100.
+
+| Company | Rows a year | Storage a year | Aurora cost |
+|---|---|---|---|
+| 50 people, 3 questions a day | 37,500 | 7 MB | pennies |
+| 500 people | 375,000 | 71 MB | about $0.20 a year |
+| 5,000 people | 3,750,000 | 709 MB | about $1.80 a year |
+
+At three questions per person per working day, a five thousand person company
+produces under a gigabyte a year. Aurora storage is around $0.10 per GB-month.
+Storage is not the reason to think about this.
+
+**The reason is that `request_log` stores the question text.** People ask an HR
+assistant whether they are being managed out, or how to report their manager.
+That is personal data. It is searchable, and nothing here deletes it.
+
+Three things a real deployment needs, none of which this project has:
+
+- **A retention rule per table, because the two differ.** Access audit often has
+  a legal minimum, measured in years. Operational metrics rarely need more than
+  a quarter at full detail. Decide each separately.
+- **A way to delete cheaply.** Partition both tables by month. Dropping last
+  year is then `DROP TABLE`, not a `DELETE` that has to vacuum millions of rows
+  out of a live table.
+- **An archive if the audit has to outlive the database.** Export partitions to
+  S3 with object lock, where storage is cents per GB-month and nothing can edit
+  them.
+
+Worth considering too: keep the tokens, latency and tool names, and drop or hash
+the question text after a shorter window. You lose the ability to read back what
+someone asked, and you keep everything you need for cost and performance work.
+
+**One thing to fix before scale, not after.** Neither table has an index. Every
+row is appended and nothing reads them in the lab, so it never shows. The first
+`WHERE created_at > ...` on a few million rows will scan the whole table. That
+will bite long before storage does.
 
 **Proving who saw a salary** means `employee_lookup_log`, joined to `messages`
 by time. What makes it evidence rather than a log file is that the application

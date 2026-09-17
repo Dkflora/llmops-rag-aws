@@ -1252,9 +1252,22 @@ FROM request_log ORDER BY id DESC LIMIT 5;</code></pre>
         or delete either. Reading them needs the admin credentials, which the application
         never has. A component that writes an audit trail should not be able to change it,
         and here Postgres enforces that rather than a code review promising it.</p>
-        <p>What is missing: no retention policy on either log, no export anywhere durable,
-        and no alert on unusual access. A real deployment needs all three,
-        plus a decision about how long you keep questions containing personal data.</p>
+        <p><strong>How much does that grow?</strong> Less than people expect. A
+        <code>request_log</code> row is about 190 bytes, most of it the question text. Five
+        thousand people asking three questions a working day produce about 700 MB a year,
+        which is under $2 a year of Aurora storage.</p>
+        <p>The reason to think about it is not size. <code>request_log</code> keeps the
+        question text, and people ask an HR assistant whether they are being managed out, or
+        how to report their manager. That is personal data, and nothing here deletes it.</p>
+        <p>What is missing: a retention rule per table, because an access audit often has a
+        legal minimum in years while operational metrics rarely need a quarter at full
+        detail. A way to delete cheaply, which means partitioning by month so dropping last
+        year is <code>DROP TABLE</code> rather than a <code>DELETE</code> that vacuums
+        millions of rows out of a live table. And an archive to S3 if the audit has to
+        outlive the database.</p>
+        <p>One option worth considering: keep the tokens, latency and tool names, and drop
+        the question text after a shorter window. You lose the ability to read back what
+        someone asked, and you keep everything you need for cost and performance work.</p>
 
         <h3>What the evaluation should be gating</h3>
         <p>The evaluation set is not something you run when you remember. It is a gate. In a real

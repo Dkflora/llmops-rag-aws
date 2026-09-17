@@ -61,3 +61,12 @@ CREATE TABLE employee_lookup_log (
     returned_ids TEXT[] NOT NULL,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Both logs are only ever appended, and both are read by time window:
+-- "what happened last week", "who looked at records yesterday". Without these
+-- every such query scans the whole table, which does not show at lab size and
+-- does at a few million rows.
+CREATE INDEX request_log_created_at_idx ON request_log (created_at DESC);
+CREATE INDEX request_log_employee_idx ON request_log (employee_id, created_at DESC);
+CREATE INDEX employee_lookup_log_created_at_idx ON employee_lookup_log (created_at DESC);
+CREATE INDEX employee_lookup_log_viewer_idx ON employee_lookup_log (viewer_id, created_at DESC);
