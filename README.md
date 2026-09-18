@@ -95,7 +95,7 @@ same half finished conversation continues on the fallback.
 | [`lambda/tests/`](lambda/tests) | Row-level security, policy access, chat API and guardrail tests |
 | [`frontend/`](frontend) | React app (Vite) with Cognito sign-in |
 | [`infra/terraform/`](infra/terraform) | The whole stack as code, one file per service |
-| [`infra/clickops.md`](infra/clickops.md) | The same services built by hand in the console, every setting and why |
+| [`docs/console-build-guide.md`](docs/console-build-guide.md) | The same services built by hand in the console, every setting and why |
 | [`docs/deployment-guide.md`](docs/deployment-guide.md) | Stand it up from nothing, step by step |
 | [`docs/llmops-notes.md`](docs/llmops-notes.md) | Running it: the indexing and retrieval decisions, what a call costs, what is logged, what belongs in CI |
 | [`scripts/`](scripts) | Build the two zips, push code changes to all four functions |

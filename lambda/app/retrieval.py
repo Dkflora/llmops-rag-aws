@@ -1,6 +1,43 @@
 """Search the policies, but only the documents this person's role may read."""
 
+import re
+
 from app import config, database, embeddings, search_index
+
+# Phrases that ask for a version no longer in force. Deliberately narrow: "prior approval"
+# or "before booking" are ordinary questions and must not pull superseded figures in.
+OLD_VERSION = re.compile(
+    r"\b(old|older|previous|former|outdated|superseded)\s+(\w+\s+){0,3}?(policy|policies|version|rules?|handbook)\b"
+    r"|\bsuperseded\b|\blast year'?s\b|\bused to\b|\bprevious version\b",
+    re.IGNORECASE,
+)
+
+
+def asks_for_old_version(question):
+    """True for "the 2024 expense policy" or "the old time off rules". Any year before
+    the current policy year counts."""
+    years = [int(year) for year in re.findall(r"\b(20\d\d)\b", question)]
+    if any(year < config.CURRENT_POLICY_YEAR for year in years):
+        return True
+    return bool(OLD_VERSION.search(question))
+
+
+# Country names as people type them. Region codes match "region" in manifest.json.
+REGIONS = {
+    "uk": re.compile(r"\b(uk|u\.k\.|united kingdom|britain|british|england|london)\b", re.I),
+    "de": re.compile(r"\b(germany|german|deutschland|berlin|munich)\b", re.I),
+}
+# "US" only in capitals, or "us" next to a place word, so the pronoun in "tell us" does not count.
+US_CAPITALS = re.compile(r"\bUS\b|\bU\.S\.")
+US_WORDS = re.compile(r"\busa\b|united states|\bamerica\b|\bus (employees?|office|staff|based)\b", re.I)
+
+
+def regions_named(text):
+    """Which countries a question names: "what about in the UK" -> ["uk"]."""
+    found = [region for region, pattern in REGIONS.items() if pattern.search(text)]
+    if US_CAPITALS.search(text) or US_WORDS.search(text):
+        found.append("us")
+    return found
 
 
 def allowed_access_levels(role):
@@ -23,13 +60,49 @@ def similarity_from_score(score):
     return 1 - 1 / score
 
 
-def search_policies(question, role):
-    """Return the policy chunks that answer the question, for this role."""
+def search_policies(question, role, old_version=False):
+    """Return the policy chunks that answer the question, for this role.
+
+    old_version (or a question that names an older year) adds the closest passages
+    from superseded documents. They come from a search of their own, because the
+    current version of the same policy is usually the nearer match and would push
+    them out of a shared result list.
+    """
     levels = allowed_access_levels(role)
     if not levels:
         return []
 
+    old = old_version or asks_for_old_version(question)
     question_vector = embeddings.embed([question])[0]
+    results = _current_matches(question, question_vector, levels)
+
+    # A country named in the question gets that country's documents first. Wording
+    # differs by country ("primary caregiver" in the US policy, "maternity pay" in the
+    # UK one), so without this the right country's passage can miss the cut.
+    regions = regions_named(question)
+    if regions:
+        local = _extra_matches(question_vector, levels, regions=regions)
+        seen = {chunk["content"] for chunk in local}
+        results = local + [chunk for chunk in results if chunk["content"] not in seen]
+
+    if old:
+        results += _extra_matches(question_vector, levels, statuses=["superseded"])
+    return results
+
+
+def _extra_matches(question_vector, levels, **filters):
+    """The closest few passages under an extra filter (a country, or superseded only)."""
+    hits = search_index.search(question_vector, levels, **filters)
+    chunks = []
+    for hit in hits[:3]:
+        chunk = hit["_source"]
+        chunk["similarity"] = round(similarity_from_score(hit["_score"]), 3)
+        if chunk["similarity"] >= config.MIN_BEST_SIMILARITY:
+            chunks.append(chunk)
+    return chunks
+
+
+def _current_matches(question, question_vector, levels):
     hits = search_index.search(question_vector, levels)
 
     results = []

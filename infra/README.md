@@ -4,13 +4,13 @@ Everything that creates AWS resources. Two ways to build the same thing.
 
 | | |
 |---|---|
-| **[clickops.md](clickops.md)** | Build it by hand in the AWS Console. Every service, every setting, and why. About three hours. |
+| **[../docs/console-build-guide.md](../docs/console-build-guide.md)** | Build it by hand in the AWS Console. Every service, every setting, and why. |
 | **[terraform/](terraform)** | Build the identical stack in one command. About twenty minutes, most of it waiting for Aurora and CloudFront. |
 
 Do the console walkthrough once. You cannot debug a Terraform stack you have never seen the
 inside of, and half the hard questions about this architecture are about the parts
 Terraform hides from you. Then use Terraform for every build after that, because doing it by
-hand twice teaches you nothing new and takes three hours.
+hand twice teaches you nothing new.
 
 Neither path contains application code. The code is in [`lambda/`](../lambda) and reaches AWS
 as two zip files built by [`scripts/`](../scripts).
@@ -19,8 +19,10 @@ as two zip files built by [`scripts/`](../scripts).
 
 ```
 infra/
-  clickops.md      the console walkthrough
   terraform/       one file per service
+
+docs/
+  console-build-guide.md   the console walkthrough
 ```
 
 `terraform/` is its own folder because Terraform uses its directory as a working directory:

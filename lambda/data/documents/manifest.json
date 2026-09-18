@@ -142,9 +142,10 @@
     "department": "Finance",
     "access_level": "general",
     "version": "2026.1",
-    "status": "current",
+    "status": "superseded",
     "effective_date": "2026-01-01",
-    "file_format": "md"
+    "file_format": "md",
+    "superseded_by": "expense_policy_2026.md"
   },
   {
     "filename": "flexible_working_hours.txt",
@@ -345,9 +346,10 @@
     "department": "People Operations",
     "access_level": "general",
     "version": "2026.1",
-    "status": "current",
+    "status": "superseded",
     "effective_date": "2026-01-01",
-    "file_format": "md"
+    "file_format": "md",
+    "superseded_by": "parental_leave_policy_us.md, parental_leave_policy_uk.md, parental_leave_policy_de.md"
   },
   {
     "filename": "parental_leave_policy_de.md",
@@ -508,9 +510,10 @@
     "department": "People Operations",
     "access_level": "general",
     "version": "2026.1",
-    "status": "current",
+    "status": "superseded",
     "effective_date": "2026-01-01",
-    "file_format": "docx"
+    "file_format": "docx",
+    "superseded_by": "time_off_policy_v3.docx"
   },
   {
     "filename": "time_off_policy_v2.docx",

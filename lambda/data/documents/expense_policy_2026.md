@@ -71,3 +71,8 @@ Above 10,000, Finance approves. Nobody approves their own expenses, including ex
 You will be told why, in Expensify. If you disagree, reply there and it goes back to your
 manager, then to Finance. Rejected claims are not a disciplinary matter unless they are
 dishonest.
+
+## Mileage
+
+Personal vehicle use for business travel is reimbursed at 0.67 dollars per mile.
+Record the start point, end point, and business purpose for each trip.

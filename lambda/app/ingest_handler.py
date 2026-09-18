@@ -171,6 +171,10 @@ def ingest(documents_dir):
                 filename=entry["filename"],
                 access_level=entry["access_level"],
                 status=entry["status"],
+                # So an answer can say which version and country a passage is from
+                version=entry.get("version", ""),
+                effective_date=entry.get("effective_date", ""),
+                region=entry.get("region", ""),
                 embedding=vector,
             )
         search_index.add_chunks(chunks)                                        # 4. store
@@ -180,7 +184,7 @@ def ingest(documents_dir):
     summary = {"documents": len(entries), "chunks": total}
     print(
         f"{summary['documents']} documents, {summary['chunks']} chunks indexed "
-        f"({current} current, {len(entries) - current} superseded and excluded from search)"
+        f"({current} current, {len(entries) - current} superseded, searched only when asked for)"
     )
     return summary
 

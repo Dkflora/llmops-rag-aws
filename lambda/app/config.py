@@ -49,7 +49,13 @@ CHUNK_OVERLAP = 80
 # ---------------------------------------------------------------------------
 # Embeddings and relevance thresholds
 # ---------------------------------------------------------------------------
-RESULTS_PER_SEARCH = 4
+# 8, not 4: a policy that differs by country (parental leave: US, UK, DE) needs room
+# for each country's passage. The gap filter below still drops the weak ones.
+RESULTS_PER_SEARCH = 8
+
+# A year in a question earlier than this means "the old version", e.g. "the 2024
+# expense policy". Superseded documents are searched only for those questions.
+CURRENT_POLICY_YEAR = 2026
 
 EMBEDDING_MODEL = "amazon.titan-embed-text-v2:0"
 EMBEDDING_SIZE = 1024

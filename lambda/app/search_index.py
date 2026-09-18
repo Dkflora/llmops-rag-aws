@@ -81,6 +81,9 @@ INDEX_BODY = {
             "embedding": vector_field(),
             "access_level": {"type": "keyword"},  # general, manager_only, hr_only, exec_only
             "status": {"type": "keyword"},        # current or superseded
+            "version": {"type": "keyword"},
+            "effective_date": {"type": "keyword"},
+            "region": {"type": "keyword"},
             "title": {"type": "keyword"},
             "section": {"type": "keyword"},
             "filename": {"type": "keyword"},
@@ -116,11 +119,25 @@ def add_chunks(chunks):
     # straight after an ingest can come back short.
 
 
-def search(vector, access_levels):
-    """Find the closest chunks among current documents this person may read.
+def _statuses(include_superseded):
+    # Superseded documents are only searched when somebody asks for an older
+    # version by name. Otherwise an old figure could be quoted as today's policy.
+    return ["current", "superseded"] if include_superseded else ["current"]
+
+
+def search(vector, access_levels, include_superseded=False, statuses=None, regions=None):
+    """Find the closest chunks among the documents this person may read.
 
     The filter runs inside the vector search, so restricted text is never returned.
+    regions limits the search to one country's documents, e.g. ["uk"].
     """
+    filters = [
+        {"terms": {"access_level": access_levels}},
+        {"terms": {"status": statuses or _statuses(include_superseded)}},
+    ]
+    if regions:
+        filters.append({"terms": {"region": regions}})
+
     response = client().search(
         index=config.POLICY_INDEX,
         body={
@@ -131,14 +148,7 @@ def search(vector, access_levels):
                     "embedding": {
                         "vector": vector,
                         "k": config.RESULTS_PER_SEARCH,
-                        "filter": {
-                            "bool": {
-                                "filter": [
-                                    {"terms": {"access_level": access_levels}},
-                                    {"term": {"status": "current"}},
-                                ]
-                            }
-                        },
+                        "filter": {"bool": {"filter": filters}},
                     }
                 }
             },
@@ -147,7 +157,7 @@ def search(vector, access_levels):
     return response["hits"]["hits"]
 
 
-def keyword_search(text, access_levels):
+def keyword_search(text, access_levels, include_superseded=False):
     """Match the words themselves, for the questions vectors are bad at.
 
     An embedding model has almost nothing to work with in a code: "L5", "PTO",
@@ -169,7 +179,7 @@ def keyword_search(text, access_levels):
                     "must": [{"match": {"content": text}}],
                     "filter": [
                         {"terms": {"access_level": access_levels}},
-                        {"term": {"status": "current"}},
+                        {"terms": {"status": _statuses(include_superseded)}},
                     ],
                 }
             },

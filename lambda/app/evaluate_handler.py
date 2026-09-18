@@ -41,17 +41,24 @@ def check(case, answer, sources):
     return problems
 
 
-def run_evaluation():
+def run_evaluation(only=""):
     cases = json.loads(QUESTIONS_FILE.read_text(encoding="utf-8"))
+    # {"only": "meal"} re-runs just the questions containing that word
+    if only:
+        cases = [case for case in cases if only.lower() in case["question"].lower()]
     results = []
     for case in cases:
         employee = employees.find_by_email(case["email"])
-        answer, sources = assistant.answer(case["question"], [], employee)
+        # "history" replays earlier turns, so follow-ups are tested the way people ask them
+        answer, sources = assistant.answer(case["question"], case.get("history", []), employee)
         problems = check(case, answer, sources)
         results.append({
             "who": employee["full_name"],
             "question": case["question"],
             "problems": problems,
+            # So a failure can be read without re-asking the question
+            "answer": answer,
+            "sources": sorted({source["title"] for source in sources}),
         })
 
         status = "PASS" if not problems else "FAIL"
@@ -100,10 +107,24 @@ def similarity_report():
     return report
 
 
+def search_probe(query, old_version=False):
+    """What retrieval returns for one query, to see why an answer went wrong.
+
+        --payload '{"search": "2024 PTO carryover", "old_version": true}'
+    """
+    chunks = retrieval.search_policies(query, "employee", old_version=old_version)
+    return [
+        {key: chunk.get(key) for key in ("title", "section", "version", "status", "similarity")}
+        for chunk in chunks
+    ]
+
+
 def handler(event, context):
+    if (event or {}).get("search"):
+        return search_probe(event["search"], event.get("old_version", False))
     if (event or {}).get("similarity_report"):
         return similarity_report()
-    return run_evaluation()
+    return run_evaluation((event or {}).get("only", ""))
 
 
 if __name__ == "__main__":
